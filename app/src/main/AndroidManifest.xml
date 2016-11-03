@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.administrator.ipc_test">
+
+    <permission
+        android:name="com.example.administrator.ipc_test.MyUserManagerService"
+        android:protectionLevel="normal" />
+
+    <uses-permission android:name="com.example.administrator.ipc_test.MyUserManagerService"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service
+            android:name=".BookManagerService"
+            android:process=":remote"
+            ></service>
+        <service android:name=".BinderPoolService"
+            android:process=":remote2"></service>
+        <service
+            android:name=".MyUserManagerService"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="com.example.administrator.ipc_test.action.MyUserManagerService"/>
+            </intent-filter>
+        </service>
+        <service android:name=".Messenger.MessengerService"
+            android:process=":remote3">
+        </service>
+    </application>
+
+</manifest>
