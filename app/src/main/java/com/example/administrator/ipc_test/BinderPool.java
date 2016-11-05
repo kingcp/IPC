@@ -17,8 +17,10 @@ public class BinderPool {
 
     private static final String TAG = "BinderPool";
     private static final int BINDER_NONE = -1;
-    private static final int BINDER_ADD = 0;
-    private static final int BINDER_REMOVE = 1;
+    public static final int BINDER_ADD = 0;
+    public static final int BINDER_REMOVE = 1;
+    public static final int BINDER_SECURITY_CENTER = 2;
+    public static final int BINDER_COMPUTE = 3;
 
     private Context context;
     private IBinderPool iBinderPool;
@@ -45,6 +47,7 @@ public class BinderPool {
         }
     };
 
+    //Binder连接死掉
     private IBinder.DeathRecipient mBinderPoolDeathRecipient = new IBinder.DeathRecipient() {
         @Override
         public void binderDied() {
@@ -70,6 +73,7 @@ public class BinderPool {
         return sInstance;
     }
 
+    //连接Binder线程池
     private synchronized void connectBinderPoolService(){
         mConnectBinderPoolCountDownLatch = new CountDownLatch(1);
         Intent intent = new Intent(context,BinderPoolService.class);
@@ -103,6 +107,12 @@ public class BinderPool {
                     break;
                 case BINDER_REMOVE:
                     binder = new IRemoveBookImpl();
+                    break;
+                case BINDER_SECURITY_CENTER:
+                    binder = new SecurityCenterImpl();
+                    break;
+                case BINDER_COMPUTE:
+                    binder = new ComputeImpl();
                     break;
             }
             return binder;

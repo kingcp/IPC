@@ -40,6 +40,14 @@
         <service android:name=".Messenger.MessengerService"
             android:process=":remote3">
         </service>
+        <provider
+            android:authorities="com.example.administrator.ipc_test.book.provider"
+            android:name=".ContentProvider.BookProvider"
+            android:permission="com.example.administrator.ipc_test.PROVIDER"
+            android:process=":provider">
+        </provider>
+        <activity android:name=".Messenger.MessengerActivity"></activity>
+        <activity android:name=".ContentProvider.ProviderActivity"></activity>
     </application>
 
 </manifest>

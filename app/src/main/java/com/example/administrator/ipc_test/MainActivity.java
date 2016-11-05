@@ -15,6 +15,7 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.administrator.ipc_test.ContentProvider.ProviderActivity;
 import com.example.administrator.ipc_test.Messenger.MessengerActivity;
 
 import java.util.List;
@@ -59,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
             mRemoteBookManger = bookManager;
             try {
                 List<Book> list = bookManager.getBookList();
-                Log.i(TAG, "list size " + list.size());
+                Log.i(TAG, "query book list, list type :" + list.getClass().getCanonicalName());
+                Log.i(TAG, "list: " + list.size());
+                bookManager.addBook(new Book(3,"深入理解java"));
+                List<Book> newList = bookManager.getBookList();
+                Log.i(TAG, "list: " + newList.toString());
                 bookManager.registerListener(mOnNewBookArrivedListener);
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btn;
     private ViewStub viewStub;
     private Button messenger_btn;
+    private Button content_provider_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +91,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MessengerActivity.class);
+                startActivity(intent);
+            }
+        });
+        content_provider_btn = (Button) findViewById(R.id.content_provider_btn);
+        content_provider_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ProviderActivity.class);
                 startActivity(intent);
             }
         });
@@ -99,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         });
         Intent intent = new Intent(this,MyUserManagerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);*/
-        new Thread(new Runnable() {
+     /*   new Thread(new Runnable() {
             @Override
             public void run() {
                 Book book = new Book();
@@ -122,7 +136,41 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+*/
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doWork();
+            }
+        }).start();
 
+    }
+
+    private ISecurityCenter mSecurityCenter;
+    private ICompute mCompute;
+    private void doWork() {
+        BinderPool binderPool = BinderPool.getsInstance(MainActivity.this);
+        IBinder securityBinder = binderPool.queryBinder(BinderPool.BINDER_SECURITY_CENTER);
+        mSecurityCenter = SecurityCenterImpl.asInterface(securityBinder);
+        Log.d(TAG, "Visit ISecurityCenter");
+        String msg = "hello world android";
+        System.out.println("content: " + msg);
+        try {
+            String password = mSecurityCenter.encrypt(msg);
+            System.out.println("encrypt: " + password);
+            System.out.println("decrypt: " + mSecurityCenter.decrypt(password));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "Visit IComputer ");
+        IBinder computeBinder = binderPool.queryBinder(BinderPool.BINDER_COMPUTE);
+        mCompute = ComputeImpl.asInterface(computeBinder);
+        try {
+            System.out.println("3 + 5 = " + mCompute.add(3,5));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

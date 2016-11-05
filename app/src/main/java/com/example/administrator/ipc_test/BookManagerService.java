@@ -2,6 +2,7 @@ package com.example.administrator.ipc_test;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
@@ -71,6 +72,10 @@ public class BookManagerService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        int check = checkCallingOrSelfPermission("com.example.administrator.ipc_test.MyUserManagerService");
+        if(check == PackageManager.PERMISSION_DENIED){
+            return null;
+        }
         return mBinder;
     }
 

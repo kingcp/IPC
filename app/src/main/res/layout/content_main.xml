@@ -38,4 +38,12 @@
         android:text="关于messenger相关"
         android:textSize="16sp"
         />
+    <Button
+        android:id="@+id/content_provider_btn"
+        android:layout_below="@id/messenger_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关于ContentProvider相关"
+        android:textSize="16sp"
+        />
 </RelativeLayout>
